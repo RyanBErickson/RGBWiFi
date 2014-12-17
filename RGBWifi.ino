@@ -29,12 +29,14 @@ enum {WIFI_ERROR_NONE=0, WIFI_ERROR_AT, WIFI_ERROR_RST, WIFI_ERROR_MODE, WIFI_ER
 #define PORT  "8080"      // using port 8080 by default
 
 char buffer[BUFFER_SIZE];
+char *lastcmd;
+int lastval;
 
 void setup() {
   pinMode(redPin, OUTPUT);
-  analogWrite(redPin, 255);   
+  analogWrite(redPin, 0);   
   pinMode(greenPin, OUTPUT);
-  analogWrite(greenPin, 255);   
+  analogWrite(greenPin, 0);   
   pinMode(bluePin, OUTPUT);
   analogWrite(bluePin, 0);   
 
@@ -42,7 +44,7 @@ void setup() {
   HWSERIAL.setTimeout(5000);
  
   delay(5000);  // Wait for Serial Monitor to be opened...  DEBUG code...
-  analogWrite(bluePin, 255);   
+  analogWrite(bluePin, 0);   
   
   dbg.begin(9600);
   dbg.println("begin.");
@@ -56,9 +58,9 @@ void setup() {
 
     // Blink out error number...
     for (int i = 0; i < (int)err; i++){
-      analogWrite(redPin, 0);
-      delay(500);
       analogWrite(redPin, 255);
+      delay(500);
+      analogWrite(redPin, 0);
       delay(500);
     }
   } else {
@@ -126,18 +128,19 @@ void loop() {
 
       // --------- Command Set --------- 
       // All commands end with Newline...
-      // !RGB=255,255,255 (RGB Set)
-      // !R=128 
-      // !G=128
-      // !B=128
-      // !BRI -- Raises proportionally (right now, not... just adds 5 or 10)
-      // !DIM   -- Lowers proprtionally  (right now, not... just adds 5 or 10)
-      // !BRI=10 -- Raises by 10
-      // !DIM=10   -- Lowers by 10
-      // !CFAST -- Cycle Fast (colors) -- Find modes from IR device... (maybe colors)
-      // !CSLOW -- Cycle Slow (colors)
-      // !COLOR=RED/BLUE/GREEN/YELLOW/BLACK
-      // !RAMP=128,128,128 -- RAMP to RGB over time...
+      // ON / OFF
+      // RGB=255,255,255 (RGB Set)
+      // R=128 
+      // G=128
+      // B=128
+      // BRI -- Raises proportionally (right now, not... just adds 5 or 10)
+      // DIM   -- Lowers proprtionally  (right now, not... just adds 5 or 10)
+      // BRI=10 -- Raises by 10
+      // DIM=10   -- Lowers by 10
+      // CFAST -- Cycle Fast (colors) -- Find modes from IR device... (maybe colors)
+      // CSLOW -- Cycle Slow (colors)
+      // COLOR=RED/BLUE/GREEN/ORANGE/YELLOW/BLACK
+      // RAMP=128,128,128 -- RAMP to RGB over time...
       // ------------------------------- 
 
       // TODO: Move parsing into a function...
@@ -153,45 +156,74 @@ void loop() {
         HWSERIAL.println(cmd);
       }
 
+      // TODO: Should probably match by smallest to largest string comparisons...
 
-      -- TODO: Should probably match by smallest to largest string comparisons...
+      if (strncmp(pb, ".", 1) == 0) {
+        pb = lastcmd;
+      }
 
-      if ((strncmp(pb, "!BRI", 4) == 0) || (strncmp(pb, "!bri", 4) == 0)) {
+      if ((strncmp(pb, "ON", 2) == 0) || (strncmp(pb, "on", 2) == 0)) {
+	SetRGB(255,255,255);
+      }
+
+      if ((strncmp(pb, "OFF", 3) == 0) || (strncmp(pb, "off", 3) == 0)) {
+	SetRGB(0,0,0);
+      }
+
+      if ((strncmp(pb, "BRI=", 4) == 0) || (strncmp(pb, "bri=", 4) == 0)) {
+        sscanf(pb+4, "%d", &lastval);
+	SetRGB(cur_r+lastval, cur_g+lastval, cur_b+lastval);
+        lastcmd = "bri=";
+      }
+      else if ((strncmp(pb, "BRI", 3) == 0) || (strncmp(pb, "bri", 3) == 0)) {
 	SetRGB(cur_r+10, cur_g+10, cur_b+10);
+        lastcmd = "bri";
+        lastval = 10;
 
-        -- TODO: These should all return current RGB values, not just 'OK'...
-	-- TODO: But probably not during fades...
+        // TODO: These should all return current RGB values, not just 'OK'...
+	// TODO: But probably not during fades...
 	SendReply(ch_id, "OK");
       }
-      if ((strncmp(pb, "!DIM", 4) == 0) || (strncmp(pb, "!dim", 4) == 0)) {
+      if ((strncmp(pb, "DIM=", 4) == 0) || (strncmp(pb, "dim=", 4) == 0)) {
+        sscanf(pb+4, "%d", &lastval);
+	SetRGB(cur_r-lastval, cur_g-lastval, cur_b-lastval);
+        lastcmd = "dim=";
+      }
+      else if ((strncmp(pb, "DIM", 3) == 0) || (strncmp(pb, "dim", 3) == 0)) {
 	SetRGB(cur_r-10, cur_g-10, cur_b-10);
 	SendReply(ch_id, "OK");
+        lastcmd = "dim";
+        lastval = 10;
       }
-      if ((strncmp(pb, "!RGB=", 5) == 0) || (strncmp(pb, "!rgb=", 5) == 0)) {
+      if ((strncmp(pb, "RGB=", 4) == 0) || (strncmp(pb, "rgb=", 4) == 0)) {
         int r, g, b;
-        sscanf(pb+5, "%d,%d,%d", &r, &g, &b);
+        sscanf(pb+4, "%d,%d,%d", &r, &g, &b);
 	SetRGB(r, g, b);
+        lastcmd = "";
 	SendReply(ch_id, "OK");
       }
-      if ((strncmp(pb, "!R=", 3) == 0) || (strncmp(pb, "!r=", 3) == 0)) {
+      if ((strncmp(pb, "R=", 2) == 0) || (strncmp(pb, "r=", 2) == 0)) {
         int r;
-        sscanf(pb+3, "%d", &r);
+        sscanf(pb+2, "%d", &r);
 	SetRGB(r, cur_g, cur_b);
         cur_r = r;
+        lastcmd = "";
 	SendReply(ch_id, "OK");
       }
-      if ((strncmp(pb, "!G=", 3) == 0) || (strncmp(pb, "!g=", 3) == 0)) {
+      if ((strncmp(pb, "G=", 2) == 0) || (strncmp(pb, "g=", 2) == 0)) {
         int g;
-        sscanf(pb+3, "%d", &g);
+        sscanf(pb+2, "%d", &g);
 	SetRGB(cur_r, g, cur_b);
         cur_g = g;
+        lastcmd = "";
 	SendReply(ch_id, "OK");
       }
-      if ((strncmp(pb, "!B=", 3) == 0) || (strncmp(pb, "!b=", 3) == 0)) {
+      if ((strncmp(pb, "B=", 2) == 0) || (strncmp(pb, "b=", 2) == 0)) {
         int b;
-        sscanf(pb+3, "%d", &b);
+        sscanf(pb+2, "%d", &b);
 	SetRGB(cur_r, cur_g, b);
         cur_b = b;
+        lastcmd = "";
 	SendReply(ch_id, "OK");
       }
     }
@@ -215,9 +247,9 @@ boolean SetRGB(int r, int g, int b)
   cur_b = b;
 
   // Set Outputs
-  analogWrite(redPin, 255-r);
-  analogWrite(greenPin, 255-g);
-  analogWrite(bluePin, 255-b);
+  analogWrite(redPin, r);
+  analogWrite(greenPin, g);
+  analogWrite(bluePin, b);
 }
 
 

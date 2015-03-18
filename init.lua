@@ -39,6 +39,12 @@ function save_config(ssid, pass)
 end
 
 
+function reset_wifi()
+  save_config()
+  node.restart()
+end
+
+
 function prl(f, t)
   print('loading ' .. f .. '.lua in ' .. t .. ' seconds')
   tmr.alarm(0, t * 1000, 1, mkf(f, t))

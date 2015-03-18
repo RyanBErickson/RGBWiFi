@@ -1,0 +1,5 @@
+
+Make Dev Environment that can connect to /dev/ttyUSBX and program the necessary files.
+
+Build similar to Lua build for Control4... Similar things...
+

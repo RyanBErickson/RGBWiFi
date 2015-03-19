@@ -80,6 +80,11 @@
   <div class="colour-changer"></div>
   <div class="colour-changer"></div>
   <div class="colour-off" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'off', true); xhr.send(null);" ontouchstart="xhr = new XMLHttpRequest(); xhr.open('GET', 'off', true); xhr.send(null);"></div>
+<input type="button" id="btn" value="Scene 1" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene1', true); xhr.send(null);" />
+<input type="button" id="btn" value="Scene 2" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene2', true); xhr.send(null);" />
+<input type="button" id="btn" value="Scene 3" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene3', true); xhr.send(null);" />
+<input type="button" id="btn" value="Scene 4" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene4', true); xhr.send(null);" />
+<input type="button" id="btn" value="Scene 5" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene5', true); xhr.send(null);" />
   <script>
     function toArray(arr) {
       return Array.prototype.slice.call(arr);
@@ -105,26 +110,4 @@
     });
   </script>
 </body>
-<!--        local html = [=====[<html>
-  <form method="POST" name="rgbw">
-    <p>R:<input type="text" name="r" value="" /></p>
-    <p>G:<input type="text" name="g" value="" /></p>
-    <p>B:<input type="text" name="b" value="" /></p>
-    <p>W:<input type="text" name="w" value="" /></p>
-    <input type="hidden" name="form" value="RGBW" />
-    <p><input type="submit" value="Set Color" /></p>
-  </form>
-  ---------
-  <form method="POST" name="scenes">
-    <p><input type="radio" name="scene" value="1" checked="checked" />Scene 1</p>
-    <p><input type="radio" name="scene" value="2" />Scene 2</p>
-    <p><input type="radio" name="scene" value="3" />Scene 3</p>
-    <p><input type="radio" name="scene" value="4" />Scene 4</p>
-    <p><input type="radio" name="scene" value="5" />Scene 5</p>
-    <input type="hidden" name="form" value="SCENE" />
-    <p><input type="submit" value="Start Scene" /></p>
-  </form>
-</html>
-]=====]
--->
 </html>

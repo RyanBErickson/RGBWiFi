@@ -6,6 +6,7 @@ PWMFREQHZ = 1000
 PWMDUTY = 512 -- ?
 
 local _g, _o, _sd = gpio, gpio.OUTPUT, pwm.setduty
+r, g, b, w = 0, 0, 0, 0
 
 for _, pin in pairs({4,5,6,7}) do
  _g.mode(pin, _o)
@@ -44,6 +45,10 @@ function reset_wifi()
   node.restart()
 end
 
+-- Functions to kill loading of code, incase of boot loop...
+function kill() tmr.stop(0) end
+abort = kill
+
 
 function prl(f, t)
   print('loading ' .. f .. '.lua in ' .. t .. ' seconds')
@@ -75,5 +80,6 @@ else
   print('heap: ',node.heap())
   print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
 
-  prl('main', 15)
+  prl('main', 10)
 end
+

@@ -1,42 +1,44 @@
 print('init.lua ver 1.2')
 
--- Setup output pins...
-gPINS = {R = 7, G = 4, B = 6, W = 5} 
-PWMFREQHZ = 1000
-PWMDUTY = 512 -- ?
+-- GPIO MAP: http://goo.gl/RPzg80
+PINS = {R = 7, G = 4, B = 6, W = 5} -- GPIOs: 13, 2, 12, 14
+FREQHZ = 1000
+DUTY   = 512
+MAX = 1023
+MIN = 0
 
-DELAY = 5 -- secs to delay start
+DELAY = 5 -- startup delay
 
-local _g, _o, _sd = gpio, gpio.OUTPUT, pwm.setduty
 R,G,B,W = 0,0,0,0
 RINC, GINC, BINC, WINC = 0,0,0,0
 
-for _, pin in pairs(gPINS) do
- _g.mode(pin, _o)
- pwm.setup(pin, PWMFREQHZ, PWMDUTY)
- pwm.start(pin)
+-- setup output GPIOs
+for _, p in pairs(PINS) do
+ gpio.mode(p, gpio.OUTPUT)
+ pwm.setup(p, FREQHZ, DUTY)
+ pwm.start(p)
 end
 
 -- 0-1023 values
 function rgbw(r, g, b, w)
   r, g, b, w = r or -1, g or -1, b or -1, w or -1 
-  if (r >= 0) and (r < 1024) then R = r _sd(gPINS.R, R) end
-  if (g >= 0) and (g < 1024) then G = g _sd(gPINS.G, G) end
-  if (b >= 0) and (b < 1024) then B = b _sd(gPINS.B, B) end
-  if (w >= 0) and (w < 1024) then W = w _sd(gPINS.W, W) end
+  if (r >= MIN) and (r <= MAX) then R = r pwm.setduty(PINS.R, R) end
+  if (g >= MIN) and (g <= MAX) then G = g pwm.setduty(PINS.G, G) end
+  if (b >= MIN) and (b <= MAX) then B = b pwm.setduty(PINS.B, B) end
+  if (w >= MIN) and (w <= MAX) then W = w pwm.setduty(PINS.W, W) end
 end
 
 function on()
-  rgbw(1023,1023,1023,1023)
+  rgbw(MAX,MAX,MAX,MAX)
 end
 
 function off()
-  rgbw(0,0,0,0)
+  rgbw(MIN,MIN,MIN,MIN)
 end
 
-off()
+off() -- initial
 
--- Rewriting config.lua... to use in auto-config script...
+-- save config.lua... used by auto-config script...
 function save_config(ssid, pass)
   ssid, pass = ssid or '', pass or ''
   file.open("config.lua", "w")
@@ -49,7 +51,6 @@ function save_config(ssid, pass)
   file.flush()
   file.close()
 end
-
 
 function reset()
   save_config()
@@ -64,19 +65,13 @@ CONFIG = CONFIG or {}
 pcall(dofile, "config.lua")
 
 if (CONFIG.SSID == nil) or (CONFIG.PASS == nil) then
-  print('No config found.  Loading connect.lua in ' .. DELAY .. ' seconds. enter "kill()" to stop')
+  print('No config.  Loading connect.lua in ' .. DELAY .. ' seconds. enter "kill()" to stop')
   wifi.setmode(wifi.STATIONAP)
   wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.255.0"})
   tmr.alarm(0, DELAY * 1000, 0, function() dofile('connect.lua') end)
 else
   wifi.setmode(wifi.STATION)
   wifi.sta.config(CONFIG.SSID, CONFIG.PASS)
-  print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-  print('MAC: ',wifi.sta.getmac())
-  print('chip: ',node.chipid())
-  print('heap: ',node.heap())
-  print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
   print('Loading main.lua in ' .. DELAY .. ' seconds. enter "kill()" to stop')
   tmr.alarm(0, DELAY * 1000, 0, function() dofile('main.lua') end)
 end
-

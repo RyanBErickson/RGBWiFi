@@ -1,60 +1,46 @@
-print('init.lua ver 1.2')
 local s={R=7,G=4,B=6,W=5}
-local a=1e3
-local o=512
-local t=1023
-local e=0
-local r=5
-R,G,B,W=0,0,0,0
+local e=1023
+local t=0
+local h=5
+R,G,B,W,INTENSITY=0,0,0,0,50
 for t,e in pairs(s)do
 gpio.mode(e,gpio.OUTPUT)
-pwm.setup(e,a,o)
+pwm.setup(e,1e3,512)
 pwm.start(e)
+pwm.setduty(e,0)
 end
-function rgbw(n,i,o,a)
-local h=((gIntensity or 5)/10)
-n,i,o,a=n or-1,i or-1,o or-1,a or-1
-if(n>=e)and(n<=t)then R=n pwm.setduty(s.R,n*h)end
-if(i>=e)and(i<=t)then G=i pwm.setduty(s.G,i*h)end
-if(o>=e)and(o<=t)then B=o pwm.setduty(s.B,o*h)end
-if(a>=e)and(a<=t)then W=a pwm.setduty(s.W,a*h)end
+function rgbw(a,n,o,i)
+local h=(INTENSITY/100)
+a,n,o,i=a or-1,n or-1,o or-1,i or-1
+if(a>=t)and(a<=e)then R=a pwm.setduty(s.R,a*h)end
+if(n>=t)and(n<=e)then G=n pwm.setduty(s.G,n*h)end
+if(o>=t)and(o<=e)then B=o pwm.setduty(s.B,o*h)end
+if(i>=t)and(i<=e)then W=i pwm.setduty(s.W,i*h)end
 end
 function on()
-rgbw(t,t,t,t)
-end
-function off()
 rgbw(e,e,e,e)
 end
-off()
+function off()
+rgbw(t,t,t,t)
+end
 local e="config.lua"
-function save_config(a,t)
-a,t=a or'',t or''
+function reset()
 file.open(e,"w")
 file.close()
-file.remove(e)
-file.open(e,"w+")
-file.writeline('C = {}')
-if(a~='')then file.writeline('C.SSID = "'..a..'"')end
-if(t~='')then file.writeline('C.PASS = "'..t..'"')end
-file.flush()
-file.close()
-end
-function reset()
-save_config()
 node.restart()
 end
 function kill()tmr.stop(0)end
 C={}
 pcall(dofile,e)
 if(C.SSID==nil)or(C.PASS==nil)then
-print('Config setup in '..r..'s. "kill()" to stop')
+print('Config setup in '..h..'s. "kill()" to stop')
 wifi.setmode(wifi.STATIONAP)
 wifi.ap.setip({ip="192.168.1.1",gateway="192.168.1.1",netmask="255.255.255.0"})
-tmr.alarm(0,r*1e3,0,function()dofile('connect.lua')end)
+tmr.alarm(0,h*1e3,0,function()dofile('connect.lua')end)
 else
 wifi.setmode(wifi.STATION)
 wifi.sta.config(C.SSID,C.PASS)
-print('Starting in '..r..'s. "kill()" to stop')
-tmr.alarm(0,r*1e3,0,function()dofile('main.lua')end)
+print('Starting in '..h..'s. "kill()" to stop')
+tmr.alarm(0,h*1e3,0,function()dofile('main.lua')end)
 end
 C=nil

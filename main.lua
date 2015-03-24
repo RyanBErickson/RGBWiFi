@@ -1,7 +1,9 @@
-local ip = wifi.sta.getip() or "none"
+local ip = wifi.sta.getip() or "-"
+-- TODO: Try this on the integer version of nodemcu firmware... may free enough space for more features...
+--    And may be a larger lookup table for y=sin(x)
 
 -- This code runs the HTTP server on the Client...
-print("HTTP Server: " .. ip .. "...")
+print("HTTP: " .. ip .. "...")
 srv=net.createServer(net.TCP) 
 srv:listen(80,function(conn)
   conn:on("receive",function(conn,data)
@@ -35,7 +37,7 @@ srv:listen(80,function(conn)
     --print(data)
     if (string.sub(data, 1, 6) == 'GET / ') then
       fileName = 'index.html'
-      print("index.html")
+      print(fileName)
       conn:send("H")
     else
       local _, _, msg = data:find("GET /(.-) HTTP")
@@ -49,23 +51,25 @@ srv:listen(80,function(conn)
         conn:send("H")
       else
         if (msg == "up") then 
-          gIntensity = (gIntensity or 10) + 1
-          if (gIntensity > 10) then gIntensity = 10 end
+          INTENSITY = INTENSITY + 5
+          if (INTENSITY > 100) then INTENSITY = 100 end
           rgbw(R,G,B,W)
         elseif (msg == "down") then 
-          gIntensity = (gIntensity or 0) - 1
-          if (gIntensity < 1) then gIntensity = 1 end
+          INTENSITY = INTENSITY - 5
+          if (INTENSITY < 1) then INTENSITY = 1 end
+          rgbw(R,G,B,W)
+        elseif (msg:find("level")) then 
+          local level = msg:sub(6) -- level 01-99 ??
+          INTENSITY = tonumber(level) or 50
           rgbw(R,G,B,W)
         else
           tmr.stop(1) -- Stop Scene...
-          if (msg:find("level")) then 
-            local level = msg:sub(6) -- level 00-100
-            level = tonumber(level) or 0
-            rgbw(level*10, level*10, level*10, level*10)
-          elseif (msg == "on") then 
+          if (msg == "on") then 
             on() 
           elseif (msg == "off") then 
             off() 
+          elseif (msg == "ln") then 
+            lightning() 
           elseif (msg:sub(1, 1) == "~") then
             local _, _, r, g, b = msg:find("~(..)(..)(..)")
             r = tonumber(r, 16) or 0
@@ -83,4 +87,4 @@ srv:listen(80,function(conn)
 end)
 
 -- Delay loading of freq.lua to allow heap memory to recover...
-tmr.alarm(0, 1000, 0, function() dofile('freq.lua') end)
+tmr.alarm(0, 2000, 0, function() dofile('freq.lua') end)

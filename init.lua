@@ -1,25 +1,23 @@
-print('init.lua ver 1.2')
 
 -- GPIO MAP: http://goo.gl/RPzg80
 local PINS = {R = 7, G = 4, B = 6, W = 5} -- GPIOs: 13, 2, 12, 14
-local FREQHZ = 1000
-local DUTY   = 512
 local MAX = 1023
 local MIN = 0
 
 local DELAY = 5 -- startup delay
-R,G,B,W = 0,0,0,0
+R,G,B,W,INTENSITY = 0,0,0,0,50
 
 -- setup output GPIOs
 for _, p in pairs(PINS) do
  gpio.mode(p, gpio.OUTPUT)
- pwm.setup(p, FREQHZ, DUTY)
+ pwm.setup(p, 1000, 512) -- FREQHZ, DUTY
  pwm.start(p)
+ pwm.setduty(p, 0)
 end
 
 -- 0-1023 values
 function rgbw(r, g, b, w)
-  local inten = ((gIntensity or 5) / 10)
+  local inten = (INTENSITY / 100)
   r, g, b, w = r or -1, g or -1, b or -1, w or -1 
   if (r >= MIN) and (r <= MAX) then R=r pwm.setduty(PINS.R, r*inten) end
   if (g >= MIN) and (g <= MAX) then G=g pwm.setduty(PINS.G, g*inten) end
@@ -35,25 +33,11 @@ function off()
   rgbw(MIN,MIN,MIN,MIN)
 end
 
-off() -- initial
 
--- save config.lua... used by auto-config script...
 local _c = "config.lua"
-function save_config(ssid, pass)
-  ssid, pass = ssid or '', pass or ''
+function reset()
   file.open(_c, "w")
   file.close()
-  file.remove(_c)
-  file.open(_c, "w+")
-  file.writeline('C = {}')
-  if (ssid ~= '') then file.writeline('C.SSID = "' .. ssid .. '"') end
-  if (pass ~= '') then file.writeline('C.PASS = "' .. pass .. '"') end
-  file.flush()
-  file.close()
-end
-
-function reset()
-  save_config()
   node.restart()
 end
 

@@ -9,6 +9,7 @@ local F = { 32, 63, 95, 126, 156, 186, 215, 243, 270, 297,
 
 function freq(i)
   if (i == 0) then i = 1 end -- hack
+  -- Handle 2 quadrant data...
   if (i > 99) then i = 99 end
   if (i > 50) then return 500-F[i-50] end
   return F[i] + 500
@@ -20,11 +21,28 @@ function f_scene()
 end
 
 function do_scene(scene)
+  _i=0
+  f_scene()
   if (scene == 1) then
-    _i=0 f_scene()tmr.alarm(1,30,1,f_scene)
+    tmr.alarm(1,30,1,f_scene)
   elseif (scene == 2) then
-    _i=0 f_scene()tmr.alarm(1,300,1,f_scene)
+    tmr.alarm(1,300,1,f_scene)
   elseif (scene == 3) then
-    _i=0 f_scene()tmr.alarm(1,3000,1,f_scene)
+    tmr.alarm(1,3000,1,f_scene)
   end
+end
+
+function lightning()
+-- Not enough memory for this...
+--[[
+  local intensity = INTENSITY
+  local r,g,b,w = R,G,B,W
+  INTENSITY = 100
+  for i=1, 5 do
+    on() tmr.delay(10000) tmr.wdclr()
+    off() tmr.delay(i*15000) tmr.wdclr()
+  end
+  INTENSITY = intensity
+  rgbw(r,g,b,w)
+]]
 end

@@ -14,11 +14,15 @@ _i=_i or 0
 _i=_i+1 rgbw(freq(_i%99),freq((_i+33)%99),freq((_i+66)%99))
 end
 function do_scene(e)
+_i=0
+f_scene()
 if(e==1)then
-_i=0 f_scene()tmr.alarm(1,30,1,f_scene)
+tmr.alarm(1,30,1,f_scene)
 elseif(e==2)then
-_i=0 f_scene()tmr.alarm(1,300,1,f_scene)
+tmr.alarm(1,300,1,f_scene)
 elseif(e==3)then
-_i=0 f_scene()tmr.alarm(1,3e3,1,f_scene)
+tmr.alarm(1,3e3,1,f_scene)
 end
+end
+function lightning()
 end

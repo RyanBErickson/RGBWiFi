@@ -1,0 +1,4 @@
+-- Squish file for freq.lua
+
+Main "freq.lua"
+Output "freq.lua.squished"

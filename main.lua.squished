@@ -1,0 +1,76 @@
+local e=wifi.sta.getip()or"none"
+print("HTTP Server: "..e.."...")
+srv=net.createServer(net.TCP)
+srv:listen(80,function(e)
+e:on("receive",function(o,i)
+local a=false
+local t=''
+o:on("sent",function(e)
+if(t~='')then
+if not a then
+a=true
+file.open(t,'r')
+end
+local t=file.read(256)
+if t then
+e:send(t)
+t=nil
+else
+file.close()
+e:close()
+e=nil
+end
+else
+e:close()
+e=nil
+end
+end)
+if(string.sub(i,1,6)=='GET / ')then
+t='index.html'
+print("index.html")
+o:send("H")
+else
+local a,a,e=i:find("GET /(.-) HTTP")
+if(e:find("scene")==1)then
+local e=e:sub(6,6)
+e=tonumber(e)or 0
+if(e~=0)then
+do_scene(e)
+end
+t='nodata.html'
+o:send("H")
+else
+if(e=="up")then
+gIntensity=(gIntensity or 10)+1
+if(gIntensity>10)then gIntensity=10 end
+rgbw(R,G,B,W)
+elseif(e=="down")then
+gIntensity=(gIntensity or 0)-1
+if(gIntensity<1)then gIntensity=1 end
+rgbw(R,G,B,W)
+else
+tmr.stop(1)
+if(e:find("level"))then
+local e=e:sub(6)
+e=tonumber(e)or 0
+rgbw(e*10,e*10,e*10,e*10)
+elseif(e=="on")then
+on()
+elseif(e=="off")then
+off()
+elseif(e:sub(1,1)=="~")then
+local o,o,a,e,t=e:find("~(..)(..)(..)")
+a=tonumber(a,16)or 0
+e=tonumber(e,16)or 0
+t=tonumber(t,16)or 0
+print("RGB: ",a,e,t)
+rgbw(a*4,e*4,t*4)
+end
+end
+t='nodata.html'
+o:send("H")
+end
+end
+end)
+end)
+tmr.alarm(0,1e3,0,function()dofile('freq.lua')end)

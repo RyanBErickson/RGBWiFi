@@ -1,7 +1,7 @@
 -- Code originally from https://github.com/dannyvai/esp2866_tools
 
 -- Start 'myhotspot' AP... 
-print("Starting 'myhotspot' SSID HTTP Server")
+print("Starting 'SSID:myhotspot' Server")
 wifi.setmode(wifi.STATIONAP)
 wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.255.0"})
 wifi.ap.config({ssid='myhotspot', pwd='myhotspot'})

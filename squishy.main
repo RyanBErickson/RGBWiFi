@@ -1,0 +1,4 @@
+-- Squish file for main.lua
+
+Main "main.lua"
+Output "main.lua.squished"

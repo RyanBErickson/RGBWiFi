@@ -1,5 +1,7 @@
-<!-- http://updates.html5rocks.com/2013/12/300ms-tap-delay-gone-away -->
-<!-- from: http://dangerousprototypes.com/forum/viewtopic.php?f=56&t=7026#p60412 -->
+TTP/1.1 200 OK
+Content-type: text/html
+Connection: close
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,6 +19,7 @@
   </style>
 </head>
 <body>
+  <!-- from: http://dangerousprototypes.com/forum/viewtopic.php?f=56&t=7026#p60412 -->
   <div class="colour-changer"></div>
   <div class="colour-changer"></div>
   <div class="colour-changer"></div>
@@ -83,8 +86,10 @@
 <input type="button" id="btn" value="Scene 1" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene1', true); xhr.send(null);" />
 <input type="button" id="btn" value="Scene 2" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene2', true); xhr.send(null);" />
 <input type="button" id="btn" value="Scene 3" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene3', true); xhr.send(null);" />
-<input type="button" id="btn" value="Scene 4" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene4', true); xhr.send(null);" />
-<input type="button" id="btn" value="Scene 5" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'scene5', true); xhr.send(null);" />
+<input type="button" id="btn" value="On" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'on', true); xhr.send(null);" />
+<input type="button" id="btn" value="Off" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'off', true); xhr.send(null);" />
+<input type="button" id="btn" value="Up" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'up', true); xhr.send(null);" />
+<input type="button" id="btn" value="Down" onclick="xhr = new XMLHttpRequest(); xhr.open('GET', 'down', true); xhr.send(null);" />
   <script>
     function toArray(arr) {
       return Array.prototype.slice.call(arr);

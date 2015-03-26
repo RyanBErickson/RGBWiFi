@@ -1,4 +1,4 @@
 cp squishy.main squishy
-squish
+squish --minify-level=basic
 #./luatool.py -f main.lua -t main.lua
 ./luatool.py -f main.lua.squished -t main.lua

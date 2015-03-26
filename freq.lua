@@ -33,8 +33,6 @@ function do_scene(scene)
 end
 
 function lightning()
--- Not enough memory for this...
---[[
   local intensity = INTENSITY
   local r,g,b,w = R,G,B,W
   INTENSITY = 100
@@ -44,5 +42,4 @@ function lightning()
   end
   INTENSITY = intensity
   rgbw(r,g,b,w)
-]]
 end

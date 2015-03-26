@@ -17,12 +17,11 @@ end
 
 -- 0-1023 values
 function rgbw(r, g, b, w)
-  local inten = (INTENSITY / 100)
   r, g, b, w = r or -1, g or -1, b or -1, w or -1 
-  if (r >= MIN) and (r <= MAX) then R=r pwm.setduty(PINS.R, r*inten) end
-  if (g >= MIN) and (g <= MAX) then G=g pwm.setduty(PINS.G, g*inten) end
-  if (b >= MIN) and (b <= MAX) then B=b pwm.setduty(PINS.B, b*inten) end
-  if (w >= MIN) and (w <= MAX) then W=w pwm.setduty(PINS.W, w*inten) end
+  if (r >= MIN) and (r <= MAX) then R=r pwm.setduty(PINS.R, r*INTENSITY/100) end
+  if (g >= MIN) and (g <= MAX) then G=g pwm.setduty(PINS.G, g*INTENSITY/100) end
+  if (b >= MIN) and (b <= MAX) then B=b pwm.setduty(PINS.B, b*INTENSITY/100) end
+  if (w >= MIN) and (w <= MAX) then W=w pwm.setduty(PINS.W, w*INTENSITY/100) end
 end
 
 function on()

@@ -1,46 +1,45 @@
-local s={R=7,G=4,B=6,W=5}
-local e=1023
-local t=0
-local h=5
+local PINS={R=7,G=4,B=6,W=5}
+local MAX=1023
+local MIN=0
+local DELAY=5
 R,G,B,W,INTENSITY=0,0,0,0,50
-for t,e in pairs(s)do
-gpio.mode(e,gpio.OUTPUT)
-pwm.setup(e,1e3,512)
-pwm.start(e)
-pwm.setduty(e,0)
+for _,p in pairs(PINS)do
+gpio.mode(p,gpio.OUTPUT)
+pwm.setup(p,1000,512)
+pwm.start(p)
+pwm.setduty(p,0)
 end
-function rgbw(a,n,o,i)
-local h=(INTENSITY/100)
-a,n,o,i=a or-1,n or-1,o or-1,i or-1
-if(a>=t)and(a<=e)then R=a pwm.setduty(s.R,a*h)end
-if(n>=t)and(n<=e)then G=n pwm.setduty(s.G,n*h)end
-if(o>=t)and(o<=e)then B=o pwm.setduty(s.B,o*h)end
-if(i>=t)and(i<=e)then W=i pwm.setduty(s.W,i*h)end
+function rgbw(r,g,b,w)
+r,g,b,w=r or-1,g or-1,b or-1,w or-1
+if(r>=MIN)and(r<=MAX)then R=r pwm.setduty(PINS.R,r*INTENSITY/100)end
+if(g>=MIN)and(g<=MAX)then G=g pwm.setduty(PINS.G,g*INTENSITY/100)end
+if(b>=MIN)and(b<=MAX)then B=b pwm.setduty(PINS.B,b*INTENSITY/100)end
+if(w>=MIN)and(w<=MAX)then W=w pwm.setduty(PINS.W,w*INTENSITY/100)end
 end
 function on()
-rgbw(e,e,e,e)
+rgbw(MAX,MAX,MAX,MAX)
 end
 function off()
-rgbw(t,t,t,t)
+rgbw(MIN,MIN,MIN,MIN)
 end
-local e="config.lua"
+local _c="config.lua"
 function reset()
-file.open(e,"w")
+file.open(_c,"w")
 file.close()
 node.restart()
 end
 function kill()tmr.stop(0)end
 C={}
-pcall(dofile,e)
+pcall(dofile,_c)
 if(C.SSID==nil)or(C.PASS==nil)then
-print('Config setup in '..h..'s. "kill()" to stop')
+print('Config setup in '..DELAY..'s. "kill()" to stop')
 wifi.setmode(wifi.STATIONAP)
 wifi.ap.setip({ip="192.168.1.1",gateway="192.168.1.1",netmask="255.255.255.0"})
-tmr.alarm(0,h*1e3,0,function()dofile('connect.lua')end)
+tmr.alarm(0,DELAY*1000,0,function()dofile('connect.lua')end)
 else
 wifi.setmode(wifi.STATION)
 wifi.sta.config(C.SSID,C.PASS)
-print('Starting in '..h..'s. "kill()" to stop')
-tmr.alarm(0,h*1e3,0,function()dofile('main.lua')end)
+print('Starting in '..DELAY..'s. "kill()" to stop')
+tmr.alarm(0,DELAY*1000,0,function()dofile('main.lua')end)
 end
 C=nil

@@ -25,6 +25,9 @@ tmr.alarm(1,3000,1,f_scene)
 end
 end
 function lightning()
+gLightning=gLightning or false
+if(gLightning)then return end
+gLightning=true
 local intensity=INTENSITY
 local r,g,b,w=R,G,B,W
 INTENSITY=100
@@ -34,4 +37,6 @@ off()tmr.delay(i*15000)tmr.wdclr()
 end
 INTENSITY=intensity
 rgbw(r,g,b,w)
+gLightning=false
 end
+print("Loaded Freq...")

@@ -33,6 +33,9 @@ function do_scene(scene)
 end
 
 function lightning()
+  gLightning = gLightning or false
+  if (gLightning) then return end
+  gLightning = true
   local intensity = INTENSITY
   local r,g,b,w = R,G,B,W
   INTENSITY = 100
@@ -42,4 +45,7 @@ function lightning()
   end
   INTENSITY = intensity
   rgbw(r,g,b,w)
+  gLightning = false
 end
+
+print("Loaded Freq...")

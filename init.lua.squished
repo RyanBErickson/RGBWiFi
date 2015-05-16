@@ -1,4 +1,4 @@
-local PINS={R=7,G=4,B=6,W=5}
+local PINS={R=5,G=6,B=7,W=4}
 local MAX=1023
 local MIN=0
 local DELAY=5
@@ -17,10 +17,18 @@ if(b>=MIN)and(b<=MAX)then B=b pwm.setduty(PINS.B,b*INTENSITY/100)end
 if(w>=MIN)and(w<=MAX)then W=w pwm.setduty(PINS.W,w*INTENSITY/100)end
 end
 function on()
+tmr.stop(1)
 rgbw(MAX,MAX,MAX,MAX)
 end
 function off()
+tmr.stop(1)
 rgbw(MIN,MIN,MIN,MIN)
+end
+function level(i)
+INTENSITY=tonumber(i)or 0
+if(INTENSITY>100)then INTENSITY=100 end
+if(INTENSITY<0)then INTENSITY=0 end
+rgbw(R,G,B,W)
 end
 local _c="config.lua"
 function reset()

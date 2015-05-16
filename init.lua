@@ -1,6 +1,9 @@
 
 -- GPIO MAP: http://goo.gl/RPzg80
-local PINS = {R = 7, G = 4, B = 6, W = 5} -- GPIOs: 13, 2, 12, 14
+local PINS = {R = 5, G = 6, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14  -- RGB strip
+--local PINS = {R = 6, G = 5, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14 (not in that order) -- RGBW strips
+
+
 local MAX = 1023
 local MIN = 0
 
@@ -25,13 +28,21 @@ function rgbw(r, g, b, w)
 end
 
 function on()
+  tmr.stop(1)
   rgbw(MAX,MAX,MAX,MAX)
 end
 
 function off()
+  tmr.stop(1)
   rgbw(MIN,MIN,MIN,MIN)
 end
 
+function level(i)
+  INTENSITY = tonumber(i) or 0
+  if (INTENSITY > 100) then INTENSITY = 100 end
+  if (INTENSITY < 0) then INTENSITY = 0 end
+  rgbw(R,G,B,W)
+end
 
 local _c = "config.lua"
 function reset()

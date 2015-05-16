@@ -1,3 +1,4 @@
--- Squish file for init.lua
-Main "init.lua"
-Output "init.lua.squished"
+-- Squish file for main.lua
+
+Main "main.lua"
+Output "main.lua.squished"

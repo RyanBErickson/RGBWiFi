@@ -48,6 +48,7 @@ for line in io.lines(fname) do
 end
 SendData([=[file.flush()]=])
 SendData([=[file.close()]=])
+SendData([=[print('Done...')]=])
 
 if (restart == "--restart") or (restart == "-r") then
   SendData([=[print('Restarting...')]=])

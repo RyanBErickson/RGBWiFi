@@ -1,6 +1,8 @@
 # RGBWiFi
 ESP8266 RGBW LED Controller
 
+NOTE: Commits after March 26th are no longer using the HTTP UI.  The current code uses UDP commands only.  Your mileage may vary if you want to use the HTTP version.
+
 These are my current files for the RGBWifi project so far, including my 'obsolete' files that I was using when I was doing the Arduino with the ESP-01 as a co-processor.
 
 It could use a good cleanup, it's got scripts I call to push it to the ESP, the squish configs I use, etc.

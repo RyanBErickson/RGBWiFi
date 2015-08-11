@@ -38,7 +38,7 @@ srv:listen(HTTPPORT,function(conn)
         local scene = msg:sub(6, 6)
         scene = tonumber(scene) or 0
         if (scene ~= 0) then
-          do_scene(scene)
+          scene(scene)
         end
         fileName = 'nodata.html'
         conn:send("H")

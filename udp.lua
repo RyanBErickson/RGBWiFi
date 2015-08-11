@@ -1,4 +1,5 @@
 UDPPORT = 8123
+TCPPORT = 8124
 PRINT_HOST = "192.168.29.18" -- desktop
 PRINT_PORT = 18123
 
@@ -9,11 +10,6 @@ PRINT_PORT = 18123
 -- Used to send print, etc...  Still fails sometimes, not sure if client or server.
 client = net.createConnection(net.UDP, false)
 client:connect(PRINT_PORT, PRINT_HOST)
-
-origprint = print
--- TODO: Why does this require client:connect before the client:send???
-print = function(s) client:connect(PRINT_PORT, PRINT_HOST) client:send(tostring(s)) origprint(s) end
-print("Redirected print to UDP output...")
 
 -- UDP Server...
 usrv=net.createServer(net.UDP)
@@ -27,15 +23,17 @@ usrv:on("receive", function(s, msg)
     end
   end)
 usrv:listen(UDPPORT, function(c) 
---[[
-    -- Redirect output doesn't work on UDP, maybe function is never called on listen init for UDP...
-    function s_output(s)
-      if (c ~= nil) then
-        c:send(s)
-      end
-    end
-    node.output(s_output, 0)
-]]
   end)
 
+-- Redirect print output to go to both print (USB/Serial and UDP)
+origprint = print
+-- TODO: Why does this require client:connect before the client:send???
+print = function(s) 
+  client:connect(PRINT_PORT, PRINT_HOST) 
+  client:send(tostring(s)) 
+  origprint(s)
+end
+
+print("Redirected print to UDP output...")
 print("Loaded UDP[" .. UDPPORT .. "]...")
+

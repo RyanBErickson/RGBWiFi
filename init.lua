@@ -19,22 +19,22 @@ for _, p in pairs(PINS) do
 end
 
 function r(val)
-  local r = val or -1
+  local r = tonumber(val) or -1
   if (r >= MIN) and (r <= MAX) then R=r pwm.setduty(PINS.R, r*INTENSITY/100) end
 end
 
 function g(val)
-  local g = val or -1
+  local g = tonumber(val) or -1
   if (g >= MIN) and (g <= MAX) then G=g pwm.setduty(PINS.G, g*INTENSITY/100) end
 end
 
 function b(val)
-  local b = val or -1
+  local b = tonumber(val) or -1
   if (b >= MIN) and (b <= MAX) then B=b pwm.setduty(PINS.B, b*INTENSITY/100) end
 end
 
 function w(val)
-  local w = val or -1
+  local w = tonumber(val) or -1
   if (w >= MIN) and (w <= MAX) then W=w pwm.setduty(PINS.W, w*INTENSITY/100) end
 end
 
@@ -58,8 +58,10 @@ function off()
   rgbw(MIN,MIN,MIN,MIN)
 end
 
-function level(i)
-  INTENSITY = tonumber(i) or 0
+function level(val)
+  local i = tonumber(val) or -1
+  if (i == -1) then return end
+  INTENSITY = i
   if (INTENSITY > 100) then INTENSITY = 100 end
   if (INTENSITY < 0) then INTENSITY = 0 end
   rgbw(R,G,B,W)
@@ -79,6 +81,7 @@ function kill() tmr.stop(0) end
 C = {}
 pcall(require, _c)
 
+--local norepeat = 0
 if (C.SSID == nil) or (C.PASS == nil) then
   print('Config setup in ' .. DELAY .. 's. "kill()" to stop')
   wifi.setmode(wifi.STATIONAP)

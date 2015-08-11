@@ -9,9 +9,9 @@ tsrv:listen(TCPPORT,function(c)
     local f = loadstring(msg)
     local ret, err = pcall(f)
     if (ret) then
-      c:send("OK\n")
+      c:send(">\n")
     else
-      print("Error: " .. err) c:send("Err: " .. err .. "\n")
+      print("Error: " .. tostring(err)) c:send("Err: " .. tostring(err) .. "\n")
     end
     
   end)

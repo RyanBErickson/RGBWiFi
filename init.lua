@@ -18,10 +18,8 @@ GAMMA = {
 }
 GAMMA[0] = 0
 
-MAX = 1023
+MAX = 100
 MIN = 0
-
-USE_GAMMA = true
 
 local DELAY = 5 -- startup delay
 R,G,B,W,INTENSITY = 0,0,0,0,50
@@ -29,10 +27,9 @@ R,G,B,W,INTENSITY = 0,0,0,0,50
 -- setup output GPIOs
 for _, p in pairs(PINS) do
  gpio.mode(p, gpio.OUTPUT)
- pwm.setup(p, 240, 0) -- FREQHZ, DUTY -- TODO: Do I need a lower frequency?  Would that help anything?
+ pwm.setup(p, 240, 0) -- FREQHZ, DUTY -- TODO: Do I need a higher frequency?  Would that help anything?
                          -- Probably anything over 120Hz is fine...
 
-                         -- Why do I set duty cycle to 512 here, when I should just set it to 0?
  pwm.start(p)
  pwm.setduty(p, 0)
 end
@@ -41,13 +38,9 @@ function calcval(val)
   local v = tonumber(val) or -1
   local orig = v
   if (v >= MIN) and (v <= MAX) then
-    v = (v * INTENSITY)/100
-    if (USE_GAMMA) then
-      v = GAMMA[math.floor(v*100/1023)] -- Convert to Gamma from 0-100
-      -- TODO: This is actually off-by-one if not 0 or 100
-    end
+    v = GAMMA[(v * INTENSITY)/100]
   else
-    return -- nil, out of bounds...
+    return
   end
   return orig, v
 end
@@ -83,7 +76,7 @@ end
 
 red, green, blue, white = r, g, b, w
 
--- 0-1023 values
+-- 0-100 values
 function rgbw(r, g, b, w)
   red(r)
   green(g)

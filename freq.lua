@@ -16,6 +16,8 @@ local F = { 32, 63, 95, 126, 156, 186, 215, 243, 270, 297, 322, 345,
 256, 228, 200, 170, 140, 109, 78, 47, 15, 8}
 
 -- 3,4,5,6 are timers for R,G,B,W
+tmrid = {} tmrid[r] = 3 tmrid[g] = 4 tmrid[b] = 5 tmrid[w] = 6
+
 function rampcolor(lev, timems, c, C)
   lev = tonumber(lev) or -1
   if (lev == -1) then return end
@@ -45,23 +47,20 @@ function rampcolor(lev, timems, c, C)
     tm = timems / diff
   end
 
-  -- TODO: Make lookup table?
-  if (c == r) then timerid = 3 end
-  if (c == g) then timerid = 4 end
-  if (c == b) then timerid = 5 end
-  if (c == w) then timerid = 6 end
+  local tid = tmrid[c]
 
-  print("lev: " .. lev .. " cur: " .. C .. " diff: " .. diff .. " tm: " .. tm .. " step: " .. step)
-  tmr.alarm(timerid, tm, 1, function() 
+  print("lev: " .. lev .. " cur: " .. C .. " diff: " .. diff .. " tm: " .. tm .. " step: " .. step .. " tid: " .. tostring(tid))
+  tmr.alarm(tid, tm, 1, function() 
                         tmr.wdclr()
                         C=C+step 
+
+                        if (C > 100) or (C < 0) then tmr.stop(tid) end
+
                         if ((step > 0) and (C>=lev)) or ((step < 0) and (C<=lev)) then 
-                          tmr.stop(timerid) 
+                          tmr.stop(tid) 
                           c(lev) -- Ensure we end at 'final' level...
-print(lev)
                         end 
                         c(C) 
-print(C)
                       end)
 end
 

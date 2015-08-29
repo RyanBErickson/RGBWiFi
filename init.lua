@@ -3,6 +3,9 @@
 --local PINS = {R = 5, G = 6, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14  -- RGB strip
 local PINS = {R = 6, G = 5, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14 (not in that order) -- RGBW strips
 
+cur = {R = 0, G = 0, B = 0, W = 0}
+
+
 -- GAMMA brightness correction table... converts 0-100 to 0-1023 in a more eye-linear fashion.
 GAMMA = {
 1,1,1,1,1,1,2,2,3,4,
@@ -22,7 +25,7 @@ MAX = 100
 MIN = 0
 
 local DELAY = 5 -- startup delay
-R,G,B,W,INTENSITY = 0,0,0,0,50
+INTENSITY = 50
 
 -- setup output GPIOs
 for _, p in pairs(PINS) do
@@ -46,33 +49,17 @@ function calcval(val)
 end
 
 
-function r(val)
+function c(val, C)
   local v, v1 = calcval(val)
   if (v == nil) then return end
-  R=v
-  pwm.setduty(PINS.R, v1)
+  cur[C]=v
+  pwm.setduty(PINS[C], v1)
 end
 
-function g(val)
-  local v, v1 = calcval(val)
-  if (v == nil) then return end
-  G=v
-  pwm.setduty(PINS.G, v1)
-end
-
-function b(val)
-  local v, v1 = calcval(val)
-  if (v == nil) then return end
-  B=v
-  pwm.setduty(PINS.B, v1)
-end
-
-function w(val)
-  local v, v1 = calcval(val)
-  if (v == nil) then return end
-  W=v
-  pwm.setduty(PINS.W, v1)
-end
+function r(val) c(val, "R") end
+function g(val) c(val, "G") end
+function b(val) c(val, "B") end
+function w(val) c(val, "W") end
 
 red, green, blue, white = r, g, b, w
 
@@ -85,12 +72,12 @@ function rgbw(r, g, b, w)
 end
 
 function on()
-  tmr.stop(1)
+  tmr.stop(1) tmr.stop(3) tmr.stop(4) tmr.stop(5) tmr.stop(6)
   rgbw(MAX,MAX,MAX,MAX)
 end
 
 function off()
-  tmr.stop(1)
+  tmr.stop(1) tmr.stop(3) tmr.stop(4) tmr.stop(5) tmr.stop(6)
   rgbw(MIN,MIN,MIN,MIN)
 end
 
@@ -100,7 +87,7 @@ function level(val)
   INTENSITY = i
   if (INTENSITY > 100) then INTENSITY = 100 end
   if (INTENSITY < 0) then INTENSITY = 0 end
-  rgbw(R,G,B,W)
+  rgbw(cur.R,cur.G,cur.B,cur.W)
 end
 
 local _c = "config"

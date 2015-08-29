@@ -56,7 +56,6 @@ SendData([=[print('Done...')]=])
 
 if (restart == "--restart") or (restart == "-r") then
   SendData([=[print('Restarting...')]=])
-
   udp:send("node.restart()\r\n")
 end
 

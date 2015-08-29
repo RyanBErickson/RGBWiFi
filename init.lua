@@ -3,9 +3,25 @@
 --local PINS = {R = 5, G = 6, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14  -- RGB strip
 local PINS = {R = 6, G = 5, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14 (not in that order) -- RGBW strips
 
+-- GAMMA brightness correction table... converts 0-100 to 0-1023 in a more eye-linear fashion.
+GAMMA = {
+1,1,1,1,1,1,2,2,3,4,
+5,6,7,9,10,12,14,16,18,20,
+23,25,28,31,34,38,41,45,49,53,
+58,62,67,72,78,83,89,95,101,107,
+114,121,128,136,143,151,159,168,176,185,
+195,204,214,224,234,245,256,267,278,290,
+302,314,327,340,353,367,380,395,409,424,
+439,454,470,486,502,519,536,554,571,589,
+608,626,645,665,684,704,725,746,767,788,
+810,832,855,878,901,925,949,973,998,1023
+}
+GAMMA[0] = 0
 
-local MAX = 1023
-local MIN = 0
+MAX = 1023
+MIN = 0
+
+USE_GAMMA = true
 
 local DELAY = 5 -- startup delay
 R,G,B,W,INTENSITY = 0,0,0,0,50
@@ -13,29 +29,56 @@ R,G,B,W,INTENSITY = 0,0,0,0,50
 -- setup output GPIOs
 for _, p in pairs(PINS) do
  gpio.mode(p, gpio.OUTPUT)
- pwm.setup(p, 1000, 512) -- FREQHZ, DUTY
+ pwm.setup(p, 240, 0) -- FREQHZ, DUTY -- TODO: Do I need a lower frequency?  Would that help anything?
+                         -- Probably anything over 120Hz is fine...
+
+                         -- Why do I set duty cycle to 512 here, when I should just set it to 0?
  pwm.start(p)
  pwm.setduty(p, 0)
 end
 
+function calcval(val)
+  local v = tonumber(val) or -1
+  local orig = v
+  if (v >= MIN) and (v <= MAX) then
+    v = (v * INTENSITY)/100
+    if (USE_GAMMA) then
+      v = GAMMA[math.floor(v*100/1023)] -- Convert to Gamma from 0-100
+      -- TODO: This is actually off-by-one if not 0 or 100
+    end
+  else
+    return -- nil, out of bounds...
+  end
+  return orig, v
+end
+
+
 function r(val)
-  local r = tonumber(val) or -1
-  if (r >= MIN) and (r <= MAX) then R=r pwm.setduty(PINS.R, r*INTENSITY/100) end
+  local v, v1 = calcval(val)
+  if (v == nil) then return end
+  R=v
+  pwm.setduty(PINS.R, v1)
 end
 
 function g(val)
-  local g = tonumber(val) or -1
-  if (g >= MIN) and (g <= MAX) then G=g pwm.setduty(PINS.G, g*INTENSITY/100) end
+  local v, v1 = calcval(val)
+  if (v == nil) then return end
+  G=v
+  pwm.setduty(PINS.G, v1)
 end
 
 function b(val)
-  local b = tonumber(val) or -1
-  if (b >= MIN) and (b <= MAX) then B=b pwm.setduty(PINS.B, b*INTENSITY/100) end
+  local v, v1 = calcval(val)
+  if (v == nil) then return end
+  B=v
+  pwm.setduty(PINS.B, v1)
 end
 
 function w(val)
-  local w = tonumber(val) or -1
-  if (w >= MIN) and (w <= MAX) then W=w pwm.setduty(PINS.W, w*INTENSITY/100) end
+  local v, v1 = calcval(val)
+  if (v == nil) then return end
+  W=v
+  pwm.setduty(PINS.W, v1)
 end
 
 red, green, blue, white = r, g, b, w
@@ -69,7 +112,7 @@ end
 
 local _c = "config"
 function reset()
-  file.open(_c, "w")
+  file.open("config.lua", "w")
   file.close()
   node.restart()
 end

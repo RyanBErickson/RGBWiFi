@@ -11,6 +11,7 @@ local delay = 500
 
 -- Delay loading of udp.lua and tcp.lua to allow heap memory to recover...
 tmr.alarm(1, delay, 0, function() require('udp') require('tcp') end)
+--tmr.alarm(1, delay, 0, function() require('udp') end)
 delay = delay + 500
 
 -- Delay loading of freq.lua to allow heap memory to recover...

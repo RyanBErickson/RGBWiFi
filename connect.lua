@@ -34,9 +34,14 @@ srv:listen(80,function(conn)
       if (ssid ~= nil) and (pwd ~= nil) then
         print("Saving SSID data and restarting...")
         save_config(ssid,pwd)
-        conn:close()
-        srv:close()
-        node.restart()
+        conn:send("HTTP/1.1 200 OK\r\n")
+        conn:send("Content-type: text/html\r\n")
+        conn:send("Connection: close\r\n\r\n")
+        conn:send([====[<html>
+<H1>Configuration Saved</H1>
+<p/>Saved access point configuration.  Restarting in 3 seconds.</H1>
+</html>]====])
+        tmr.alarm(1, 3000, 0, function() conn:close() srv:close() node.restart() end)
       else
         conn:send("HTTP/1.1 200 OK\r\n")
         conn:send("Content-type: text/html\r\n")

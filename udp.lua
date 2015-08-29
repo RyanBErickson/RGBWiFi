@@ -30,7 +30,7 @@ origprint = print
 -- TODO: Why does this require client:connect before the client:send???
 print = function(s) 
   client:connect(PRINT_PORT, PRINT_HOST) 
-  client:send(tostring(s)) 
+  client:send(tostring(s) .. '\n')
   origprint(s)
 end
 

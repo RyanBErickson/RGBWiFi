@@ -86,11 +86,10 @@ function level(val)
   if (i == -1) then return end
   INTENSITY = i
   if (INTENSITY > 100) then INTENSITY = 100 end
-  if (INTENSITY < 0) then INTENSITY = 0 end
+ if (INTENSITY < 0) then INTENSITY = 0 end
   rgbw(cur.R,cur.G,cur.B,cur.W)
 end
 
-local _c = "config"
 function reset()
   file.open("config.lua", "w")
   file.close()

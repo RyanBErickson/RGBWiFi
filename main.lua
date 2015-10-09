@@ -3,6 +3,9 @@ local ip = wifi.sta.getip() or "-"
 -- This code runs the HTTP server on the Client...
 print("IP: " .. ip .. "...")
 
+-- TODO: If there is no ip address (i.e. no client found) for X times booting (persist the data), automatically reset to AP mode.
+-- TODO: Have a Light indicator for if it's in AP mode... (low blinking red, for example)
+
 local delay = 500
 --local norepeat = 0
 

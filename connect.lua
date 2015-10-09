@@ -1,13 +1,12 @@
 -- Code originally from https://github.com/dannyvai/esp2866_tools
 
 -- save config.lua... 
-local _c = "config.lua"
 function save_config(ssid, pass)
   ssid, pass = ssid or '', pass or ''
-  file.open(_c, "w")
+  file.open("config.lua", "w")
   file.close()
-  file.remove(_c)
-  file.open(_c, "w+")
+  file.remove("config.lua")
+  file.open("config.lua", "w+")
   file.writeline('C = {}')
   if (ssid ~= '') then file.writeline('C.SSID = "' .. ssid .. '"') end
   if (pass ~= '') then file.writeline('C.PASS = "' .. pass .. '"') end

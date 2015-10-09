@@ -1,10 +1,5 @@
 -- freq = .0635 print("F = {}") for i = 1, 99 do R = S1(i) print("F[" .. i .. "] = " .. R) end
 
--- Pretty good 'white' substitute (for motion sensor light up level at night):
--- level(20) red(1023) green(256) blue(0) white(60)  (of course, this will be off with gamma...)
-
--- Gamma-corrected (no level): red(100), green(57), blue(0), white(31)
-
 -- NOTE: None of this is going to work with gamma-corrected 0-100 values...
 
 
@@ -22,7 +17,7 @@ function rampcolor(lev, timems, c, C)
   lev = tonumber(lev) or -1
   if (lev == -1) then return end
   if (lev < 0) then lev = 0 end
-  if (lev > 1023) then lev = 1023 end
+  if (lev > 100) then lev = 100 end
   timems = tonumber(timems) or -1
   if (timems == -1) then return end
   if (timems < 1) then timems = 1 end
@@ -95,7 +90,7 @@ function lightning()
   if (gLightning) then return end
   gLightning = true
   local intensity = INTENSITY
-  local r,g,b,w = R,G,B,W
+  local r,g,b,w = cur.R,cur.G,cur.B,cur.W
   INTENSITY = 100
   for i=1, 5 do
     on() tmr.delay(10000) tmr.wdclr()

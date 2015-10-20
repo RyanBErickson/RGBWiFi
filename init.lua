@@ -3,6 +3,10 @@
 --local PINS = {R = 5, G = 6, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14  -- RGB strip
 local PINS = {R = 6, G = 5, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14 (not in that order) -- RGBW strips
 
+--local PINS = {R = 5, G = 6, B = 7, W = 4} 
+-- GPIOs: 2, 13, 12, 14 (not in that order) 
+-- RGBW strips with new wiring order...
+
 cur = {R = 0, G = 0, B = 0, W = 0}
 
 
@@ -97,11 +101,11 @@ function reset()
 end
 
 -- Function to kill loading of code, incase of boot loop...
-function kill() tmr.stop(0) end
+function kill() tmr.stop(0) tmr.stop(1) tmr.stop(2) end
 
 -- load 'config.lua' file (if exists)...
 C = {}
-pcall(require, _c)
+pcall(require, 'config')
 
 --local norepeat = 0
 if (C.SSID == nil) or (C.PASS == nil) then

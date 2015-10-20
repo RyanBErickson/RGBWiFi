@@ -9,6 +9,7 @@ PRINT_PORT = 18123
 -- UDP Client...
 -- Used to send print, etc...  Still fails sometimes, not sure if client or server.
 client = net.createConnection(net.UDP, false)
+
 client:connect(PRINT_PORT, PRINT_HOST)
 
 -- UDP Server...
@@ -25,6 +26,7 @@ usrv:on("receive", function(s, msg)
 usrv:listen(UDPPORT, function(c) 
   end)
 
+--[[
 -- Redirect print output to go to both print (USB/Serial and UDP)
 origprint = print
 -- TODO: Why does this require client:connect before the client:send???
@@ -35,5 +37,6 @@ print = function(s)
 end
 
 print("Redirected print to UDP output...")
+]]
 print("Loaded UDP[" .. UDPPORT .. "]...")
 

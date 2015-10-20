@@ -1,0 +1,8 @@
+
+--cli = C4:CreateTCPClient():OnRead(function(client, data) print("RCVD") end):OnConnect(function(client) print("Connected.") end):OnDisconnect(function(client) print("Disconnected") end):Connect("192.168.29.102", 8124)
+--cli:Connect("192.168.29.102", 8124)
+cli:Write("on()\r\n")
+--cli:Close()
+--cli:ReadUntilOneOf("\n\r")
+--cli:OnRead(function(client, data) print("RECV: " .. data) end)
+

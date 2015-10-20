@@ -101,4 +101,28 @@ function lightning()
   gLightning = false
 end
 
+function debounce (func)
+    local last = 0
+    local delay = 200000
+
+    return function (...)
+        local now = tmr.now()
+        if now - last < delay then return end
+
+        last = now
+        return func(...)
+    end
+end
+
+function onChange ()
+  gPressCount = (gPressCount or 0) + 1
+  if (gPressCount > 9) then
+    lightning()
+    reset()
+  end
+end
+
+gpio.trig(3, 'down', debounce(onChange))
+
+
 print("Loaded Freq...")

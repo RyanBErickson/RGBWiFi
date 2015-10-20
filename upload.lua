@@ -3,8 +3,12 @@
 -- Fast UDP file uploader...
 -- Pass in filename, 'uploaded' filename, and -r or --restart to restart the node.
 
-ESP_HOST = "192.168.29.101"
+--ESP_HOST = "192.168.29.101"
 --ESP_HOST = "192.168.29.102"
+--ESP_HOST = "192.168.29.103"
+--ESP_HOST = "192.168.1.177"
+--ESP_HOST = "192.168.1.228"
+ESP_HOST = "192.168.0.178"
 ESP_PORT = 8123
 
 socket = require("socket")

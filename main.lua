@@ -18,6 +18,6 @@ tmr.alarm(1, delay, 0, function() require('udp') require('tcp') end)
 delay = delay + 500
 
 -- Delay loading of freq.lua to allow heap memory to recover...
-tmr.alarm(2, delay + 20000, 0, function() require('freq') end)
+tmr.alarm(2, delay + 1000, 0, function() require('freq') end)
 delay = delay + 500
 

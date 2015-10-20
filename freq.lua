@@ -44,7 +44,7 @@ function rampcolor(lev, timems, c, C)
 
   local tid = tmrid[c]
 
-  print("lev: " .. lev .. " cur: " .. C .. " diff: " .. diff .. " tm: " .. tm .. " step: " .. step .. " tid: " .. tostring(tid))
+  print("l: " .. lev .. " c: " .. C .. " d: " .. diff .. " tm: " .. tm .. " st: " .. step)
   tmr.alarm(tid, tm, 1, function() 
                         tmr.wdclr()
                         C=C+step 

@@ -1,7 +1,11 @@
 
 -- GPIO MAP: http://goo.gl/RPzg80
 --local PINS = {R = 5, G = 6, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14  -- RGB strip
-local PINS = {R = 6, G = 5, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14 (not in that order) -- RGBW strips
+--local PINS = {R = 6, G = 5, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14 (not in that order) -- RGBW strips
+
+local PINS = {R = 5, G = 6, B = 7, W = 4} 
+-- GPIOs: 2, 13, 12, 14 (not in that order) 
+-- RGBW strips with new wiring order...
 
 cur = {R = 0, G = 0, B = 0, W = 0}
 
@@ -101,7 +105,7 @@ function kill() tmr.stop(0) end
 
 -- load 'config.lua' file (if exists)...
 C = {}
-pcall(require, _c)
+pcall(require, 'config')
 
 --local norepeat = 0
 if (C.SSID == nil) or (C.PASS == nil) then

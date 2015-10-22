@@ -13,6 +13,13 @@ local F = { 32, 63, 95, 126, 156, 186, 215, 243, 270, 297, 322, 345,
 -- 3,4,5,6 are timers for R,G,B,W
 tmrid = {} tmrid[r] = 3 tmrid[g] = 4 tmrid[b] = 5 tmrid[w] = 6
 
+
+function stopramp(c)
+  local tid = tmrid[c]
+  tmr.stop(tid)
+end
+
+
 function rampcolor(lev, timems, c, C)
   lev = tonumber(lev) or -1
   if (lev == -1) then return end
@@ -58,6 +65,7 @@ function rampcolor(lev, timems, c, C)
                         c(C) 
                       end)
 end
+
 
 function freq(i)
   if (i == 0) then i = 1 end -- hack

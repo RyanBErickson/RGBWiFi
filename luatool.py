@@ -24,6 +24,7 @@ import argparse
 
 version="0.6.2"
 
+# Set check = 0 if no rx from node...
 def writeln(data, check = 1):
     if s.inWaiting() > 0:
        s.flushInput()

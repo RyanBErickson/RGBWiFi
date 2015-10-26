@@ -21,6 +21,9 @@ wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.2
 wifi.ap.config({ssid='myhotspot', pwd='myhotspot'})
 print(wifi.ap.getip())
 
+-- slow blink red LED for 'configuration mode'... once every 3 seconds
+tmr.alarm(0, 1500, 1, function() led() end)
+
 -- Start webserver...
 srv=net.createServer(net.TCP) 
 srv:listen(80,function(conn)

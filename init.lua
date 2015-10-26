@@ -1,15 +1,33 @@
 
 -- GPIO MAP: http://goo.gl/RPzg80
---local PINS = {R = 5, G = 6, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14  -- RGB strip
---local PINS = {R = 6, G = 5, B = 7, W = 4} -- GPIOs: 13, 2, 12, 14 (not in that order) -- RGBW strips
+-- Mapping between GPIOX and NodeMCU 'pin'
+GPIO = {10, 4, 9, 2, 1, nil, nil, nil, 11, 12, nil, 6, 7, 5, 8, 0} -- 1-16
+GPIO[0] = 3 -- 0
 
-local PINS = {R = 5, G = 6, B = 7, W = 4} 
--- GPIOs: 2, 13, 12, 14 (not in that order) 
--- RGBW strips with new wiring order...
+-- My boards, 2 different RGBW strips...
+--local PINS = {R = GPIO[14], G = GPIO[12], B = GPIO[13], W = GPIO[2]}
+--local PINS = {R = GPIO[12], G = GPIO[14], B = GPIO[13], W = GPIO[2]} -- R/G reversed
 
---local PINS = {R = 5, G = 6, B = 7, W = 4} 
--- GPIOs: 2, 13, 12, 14 (not in that order) 
--- RGBW strips with new wiring order...
+-- H801 WiFi controller, W2 = GPIO[2], RLED = GPIO[5], GLED = GPIO[1] (used for TX)}
+local PINS = {R = GPIO[15], G = GPIO[13], B = GPIO[12], W = GPIO[14]} 
+
+RLED = GPIO[5]
+gpio.mode(RLED, gpio.OUTPUT)
+
+function led(strCmd)
+  strCmd = strCmd or "" -- toggle default
+  if (strCmd == "ON") then
+    gpio.write(RLED, gpio.LOW)
+  elseif (strCmd == "OFF") then
+    gpio.write(RLED, gpio.HIGH)
+  else
+    local val = 0 if (gpio.read(RLED) == 0) then val = 1 end
+    gpio.write(RLED, val)
+  end
+end
+
+led("OFF")
+
 
 cur = {R = 0, G = 0, B = 0, W = 0}
 
@@ -107,21 +125,25 @@ end
 -- Function to kill loading of code, incase of boot loop...
 function kill() tmr.stop(0) tmr.stop(1) tmr.stop(2) end
 
+
 -- load 'config.lua' file (if exists)...
 C = {}
 pcall(require, 'config')
 
---local norepeat = 0
+-- Show LED blink per second...
+tmr.alarm(1, 500, 1, function() led() end)
+
 if (C.SSID == nil) or (C.PASS == nil) then
   print('Config setup in ' .. DELAY .. 's. "kill()" to stop')
   wifi.setmode(wifi.STATIONAP)
   wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.255.0"})
-  tmr.alarm(0, DELAY * 1000, 0, function() require('connect') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('connect') end)
 else
   wifi.setmode(wifi.STATION)
   wifi.sta.config(C.SSID, C.PASS)
   print('Starting in ' .. DELAY .. 's. "kill()" to stop')
-  tmr.alarm(0, DELAY * 1000, 0, function() require('main') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('main') end)
 end
 C = nil
+
 

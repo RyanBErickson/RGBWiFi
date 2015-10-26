@@ -1,23 +1,31 @@
-local ip = wifi.sta.getip() or "-"
-
--- This code runs the HTTP server on the Client...
-print("IP: " .. ip .. "...")
-
 -- TODO: If there is no ip address (i.e. no client found) for X times booting (persist the data), automatically reset to AP mode.
--- TODO: Have a Light indicator for if it's in AP mode... (low blinking red, for example)
 
-local delay = 500
---local norepeat = 0
+LOAD_DELAY = 500
 
---tmr.alarm(0, delay, 0, function() require('http') end)
---delay = delay + 500
+-- Wait for IP Address availability...
+tmr.alarm(0, 500, 1, function()   
 
--- Delay loading of udp.lua and tcp.lua to allow heap memory to recover...
-tmr.alarm(1, delay, 0, function() require('udp') require('tcp') end)
---tmr.alarm(1, delay, 0, function() require('udp') end)
-delay = delay + 500
+  led() -- blink LED 1/sec
 
--- Delay loading of freq.lua to allow heap memory to recover...
-tmr.alarm(2, delay + 1000, 0, function() require('freq') end)
-delay = delay + 500
+  ip, nm, gw=wifi.sta.getip()
+  if ip ~= nil then         
+      print("\n------------------\n IP Address: ",ip,"\n Netmask: ",nm,"\n Gateway: ",gw)
+      print("------------------")
+      tmr.stop(0) tmr.stop(1) tmr.stop(2)
+      led("OFF")
+
+      local delay = LOAD_DELAY
+
+      -- Delay loading of udp.lua/tcp.lua to allow heap memory to recover...
+      tmr.alarm(0, delay, 0, function() require('udp') end)
+      delay = delay + LOAD_DELAY
+
+      tmr.alarm(1, delay, 0, function() require('tcp') end)
+      delay = delay + LOAD_DELAY
+
+      -- Delay loading of freq.lua to allow heap memory to recover...
+      tmr.alarm(2, delay, 0, function() require('freq') end)
+      delay = delay + LOAD_DELAY
+   end 
+end)
 

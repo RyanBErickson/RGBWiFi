@@ -123,7 +123,7 @@ function reset()
 end
 
 -- Function to kill loading of code, incase of boot loop...
-function kill() tmr.stop(0) tmr.stop(1) tmr.stop(2) end
+function kill() tmr.stop(0) tmr.stop(1) tmr.stop(2) tmr.stop(3) end
 
 
 -- load 'config.lua' file (if exists)...

@@ -3,3 +3,4 @@
 #./luatool.py -f freq.lua.squished -t freq.lua
 #./luatool.py -f freq.lua -t freq.lua
 ./upload.lua freq.lua freq.lua $1
+./upload.lua freq2.lua freq2.lua $1

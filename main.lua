@@ -1,6 +1,6 @@
 -- TODO: If there is no ip address (i.e. no client found) for X times booting (persist the data), automatically reset to AP mode.
 
-LOAD_DELAY = 500
+LOAD_DELAY = 1500
 
 -- Wait for IP Address availability...
 tmr.alarm(0, 500, 1, function()   
@@ -11,7 +11,7 @@ tmr.alarm(0, 500, 1, function()
   if ip ~= nil then         
       print("\n------------------\n IP Address: ",ip,"\n Netmask: ",nm,"\n Gateway: ",gw)
       print("------------------")
-      tmr.stop(0) tmr.stop(1) tmr.stop(2)
+      tmr.stop(0) tmr.stop(1) tmr.stop(2) tmr.stop(3)
       led("OFF")
 
       local delay = LOAD_DELAY
@@ -25,6 +25,9 @@ tmr.alarm(0, 500, 1, function()
 
       -- Delay loading of freq.lua to allow heap memory to recover...
       tmr.alarm(2, delay, 0, function() require('freq') end)
+      delay = delay + LOAD_DELAY
+
+      tmr.alarm(3, delay, 0, function() require('freq2') end)
       delay = delay + LOAD_DELAY
    end 
 end)

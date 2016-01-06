@@ -5,11 +5,11 @@ GPIO = {10, 4, 9, 2, 1, nil, nil, nil, 11, 12, nil, 6, 7, 5, 8, 0} -- 1-16
 GPIO[0] = 3 -- 0
 
 -- My boards, 2 different RGBW strips...
---local PINS = {R = GPIO[14], G = GPIO[12], B = GPIO[13], W = GPIO[2]}
+local PINS = {R = GPIO[14], G = GPIO[12], B = GPIO[13], W = GPIO[2]}
 --local PINS = {R = GPIO[12], G = GPIO[14], B = GPIO[13], W = GPIO[2]} -- R/G reversed
 
 -- H801 WiFi controller, W2 = GPIO[2], RLED = GPIO[5], GLED = GPIO[1] (used for TX)}
-local PINS = {R = GPIO[15], G = GPIO[13], B = GPIO[12], W = GPIO[14]} 
+--local PINS = {R = GPIO[15], G = GPIO[13], B = GPIO[12], W = GPIO[14]} 
 
 RLED = GPIO[5]
 gpio.mode(RLED, gpio.OUTPUT)

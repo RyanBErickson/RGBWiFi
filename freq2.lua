@@ -17,4 +17,30 @@ function indicate()
   gIndicate = false
 end
 
+local F = {
+0,3,6,9,12,15,18,21,24,27,30,
+33,36,39,42,45,48,50,53,56,58,
+61,63,66,68,70,72,75,77,79,80,
+82,84,86,87,89,90,91,92,94,95,
+96,96,97,98,98,99,99,99,99,99,
+}
+F[0] = 0
+
+
+-- i == 0-200, but only data values for 1-50 (4 quadrants... we're only using data from Q1...)
+-- (x2)
+function freq(i)
+  if (i == 0) then i = 1 end -- hack
+  if (i > 199) then i = 1 end
+
+  -- Handle 4 quadrant data...
+  if (i >= 1) and (i <= 50)  then val = 50+F[i] / 2 end
+  if (i > 50) and (i <= 100) then val = 50+F[50-(i-50)] / 2 end
+  if (i > 100) and (i <= 150) then val = 50-F[(i-100)]/2 end
+  if (i > 150) and (i <= 200) then val = 50-F[50-(i-150)]/2 end
+
+  --print(i, val)
+  return val
+end
+
 print("Loaded Freq2...")

@@ -5,11 +5,11 @@ GPIO = {10, 4, 9, 2, 1, nil, nil, nil, 11, 12, nil, 6, 7, 5, 8, 0} -- 1-16
 GPIO[0] = 3 -- 0
 
 -- My boards, 2 different RGBW strips...
---local PINS = {R = GPIO[14], G = GPIO[12], B = GPIO[13], W = GPIO[2]}
+local PINS = {R = GPIO[14], G = GPIO[12], B = GPIO[13], W = GPIO[2]}
 --local PINS = {R = GPIO[12], G = GPIO[14], B = GPIO[13], W = GPIO[2]} -- R/G reversed
 
 -- H801 WiFi controller, W2 = GPIO[2], RLED = GPIO[5], GLED = GPIO[1] (used for TX)}
-local PINS = {R = GPIO[15], G = GPIO[13], B = GPIO[12], W = GPIO[14]} 
+--local PINS = {R = GPIO[15], G = GPIO[13], B = GPIO[12], W = GPIO[14]} 
 
 RLED = GPIO[5]
 gpio.mode(RLED, gpio.OUTPUT)
@@ -137,12 +137,12 @@ if (C.SSID == nil) or (C.PASS == nil) then
   print('Config setup in ' .. DELAY .. 's. "kill()" to stop')
   wifi.setmode(wifi.STATIONAP)
   wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.255.0"})
-  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('connect') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('keyinput') require('connect') end)
 else
   wifi.setmode(wifi.STATION)
   wifi.sta.config(C.SSID, C.PASS)
   print('Starting in ' .. DELAY .. 's. "kill()" to stop')
-  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('main') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('keyinput') require('main') end)
 end
 C = nil
 

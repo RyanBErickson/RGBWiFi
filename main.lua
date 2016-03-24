@@ -32,3 +32,4 @@ tmr.alarm(0, 500, 1, function()
    end 
 end)
 
+print("Loaded main...")

@@ -21,7 +21,6 @@ tmr.alarm(0, 500, 1, function()
       kill()
       --led("OFF")
 
-      off()
       g(10) -- Green, got IP
 
       local delay = LOAD_DELAY
@@ -38,7 +37,7 @@ tmr.alarm(0, 500, 1, function()
       tmr.alarm(3, delay, 0, function() require('freq') g(70) end)
       delay = delay + LOAD_DELAY
 
-      tmr.alarm(4, delay, 0, function() require('freq2') off() end)
+      tmr.alarm(4, delay, 0, function() off() require('freq2') end)
       delay = delay + LOAD_DELAY
    end 
 end)

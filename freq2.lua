@@ -44,3 +44,4 @@ function freq(i)
 end
 
 print("Loaded Freq2...")
+blink(0,100,0,50,5)

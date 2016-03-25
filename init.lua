@@ -138,7 +138,7 @@ function blink(r, g, b, rate, max)
 
   if (_blink == 0) then
     _cur = _cur + 1
-    if (_cur > _max) then off() blinkstop() end
+    if (_cur > _max) then blinkstop() off() return end
     rgbw(r,g,b,0)
     _blink = 1
   else
@@ -172,19 +172,22 @@ C = {}
 pcall(require, 'config')
 
 -- Show LED blink per second...
-tmr.alarm(1, 500, 1, function() led() end)
+--tmr.alarm(1, 500, 1, function() led() end)
 blink(0,0,20,500) -- Red blink before load...
+
+require('keyinput')
 
 if (C.SSID == nil) or (C.PASS == nil) then
   print('Config setup in ' .. DELAY .. 's. "kill()" to stop')
   wifi.setmode(wifi.STATIONAP)
   wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.255.0"})
-  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('keyinput') require('connect') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('connect') end)
 else
   wifi.setmode(wifi.STATION)
   wifi.sta.config(C.SSID, C.PASS)
+
   print('Starting in ' .. DELAY .. 's. "kill()" to stop')
-  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('keyinput') require('main') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('main') end)
 end
 C = nil
 

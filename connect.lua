@@ -10,7 +10,7 @@ print(wifi.ap.getip())
 -- slow blink red LED for 'configuration mode'... once every 3 seconds
 --tmr.alarm(0, 1500, 1, function() led() end)
 blinkstop()
-blink(20, 20, 0, 1000)
+blink(20, 20, 0, 1000, 1000)
 
 -- Start webserver...
 srv=net.createServer(net.TCP) 

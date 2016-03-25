@@ -137,12 +137,12 @@ if (C.SSID == nil) or (C.PASS == nil) then
   print('Config setup in ' .. DELAY .. 's. "kill()" to stop')
   wifi.setmode(wifi.STATIONAP)
   wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.255.0"})
-  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('connect') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('keyinput') require('connect') end)
 else
   wifi.setmode(wifi.STATION)
   wifi.sta.config(C.SSID, C.PASS)
   print('Starting in ' .. DELAY .. 's. "kill()" to stop')
-  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('main') end)
+  tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('keyinput') require('main') end)
 end
 C = nil
 

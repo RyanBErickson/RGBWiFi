@@ -61,3 +61,4 @@ srv:listen(80,function(conn)
   conn:on("sent",function(conn) conn:close() end)
 end)
 
+print("Loaded connect...")

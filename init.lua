@@ -10,8 +10,8 @@ local PINS = {R = GPIO[14], G = GPIO[12], B = GPIO[13], W = GPIO[2]}
 
 -- H801 WiFi controller, W2 = GPIO[2], RLED = GPIO[5], GLED = GPIO[1] (used for TX)}
 --local PINS = {R = GPIO[15], G = GPIO[13], B = GPIO[12], W = GPIO[14]} 
-
 RLED = GPIO[5]
+
 gpio.mode(RLED, gpio.OUTPUT)
 
 function led(strCmd)
@@ -25,6 +25,9 @@ function led(strCmd)
     gpio.write(RLED, val)
   end
 end
+
+-- Don't enable blinky LED for my boards...
+led = function() end
 
 led("OFF")
 
@@ -82,10 +85,10 @@ function c(val, C)
   pwm.setduty(PINS[C], v1)
 end
 
-function r(val) c(val, "R") end
-function g(val) c(val, "G") end
-function b(val) c(val, "B") end
-function w(val) c(val, "W") end
+function r(v) c(v, "R") end
+function g(v) c(v, "G") end
+function b(v) c(v, "B") end
+function w(v) c(v, "W") end
 
 red, green, blue, white = r, g, b, w
 
@@ -116,14 +119,52 @@ function level(val)
   rgbw(cur.R,cur.G,cur.B,cur.W)
 end
 
-function reset()
+function blinkstop()
+  tmr.stop(2)
+  off()
+  _cur = 0
+  _blink = 2
+end
+
+function blink(r, g, b, rate, max)
+  _blink = _blink or 2
+  max = max or 25
+  if (_blink == 2) then
+    _blink = 0
+    _max = max
+    _cur = 0
+    tmr.alarm(2, rate, 1, function() blink(r,g,b) end)
+  end
+
+  if (_blink == 0) then
+    _cur = _cur + 1
+    if (_cur > _max) then off() blinkstop() end
+    rgbw(r,g,b,0)
+    _blink = 1
+  else
+    off()
+    _blink = 0
+  end
+end
+
+-- save or clear config.lua... 
+function config(ssid, pass)
+  ssid, pass = ssid or '', pass or ''
   file.open("config.lua", "w")
   file.close()
-  node.restart()
+  file.remove("config.lua")
+  if (ssid ~= '') then
+    file.open("config.lua", "w+")
+    file.writeline('C = {}')
+    file.writeline('C.SSID = "' .. ssid .. '"')
+    if (pass ~= '') then file.writeline('C.PASS = "' .. pass .. '"') end
+    file.flush()
+    file.close()
+  end
 end
 
 -- Function to kill loading of code, incase of boot loop...
-function kill() tmr.stop(0) tmr.stop(1) tmr.stop(2) tmr.stop(3) end
+function kill() tmr.stop(0) tmr.stop(1) tmr.stop(2) tmr.stop(3) tmr.stop(4) end
 
 
 -- load 'config.lua' file (if exists)...
@@ -132,6 +173,7 @@ pcall(require, 'config')
 
 -- Show LED blink per second...
 tmr.alarm(1, 500, 1, function() led() end)
+blink(0,0,20,500) -- Red blink before load...
 
 if (C.SSID == nil) or (C.PASS == nil) then
   print('Config setup in ' .. DELAY .. 's. "kill()" to stop')
@@ -145,5 +187,4 @@ else
   tmr.alarm(0, DELAY * 1000, 0, function() tmr.stop(1) require('keyinput') require('main') end)
 end
 C = nil
-
 

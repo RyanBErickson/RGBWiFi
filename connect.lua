@@ -1,18 +1,4 @@
--- Code originally from https://github.com/dannyvai/esp2866_tools
-
--- save config.lua... 
-function save_config(ssid, pass)
-  ssid, pass = ssid or '', pass or ''
-  file.open("config.lua", "w")
-  file.close()
-  file.remove("config.lua")
-  file.open("config.lua", "w+")
-  file.writeline('C = {}')
-  if (ssid ~= '') then file.writeline('C.SSID = "' .. ssid .. '"') end
-  if (pass ~= '') then file.writeline('C.PASS = "' .. pass .. '"') end
-  file.flush()
-  file.close()
-end
+-- Code from https://github.com/dannyvai/esp2866_tools
 
 -- Start 'myhotspot' AP... 
 print("Starting 'SSID:myhotspot' Server")
@@ -22,7 +8,9 @@ wifi.ap.config({ssid='myhotspot', pwd='myhotspot'})
 print(wifi.ap.getip())
 
 -- slow blink red LED for 'configuration mode'... once every 3 seconds
-tmr.alarm(0, 1500, 1, function() led() end)
+--tmr.alarm(0, 1500, 1, function() led() end)
+blinkstop()
+blink(20, 20, 0, 1000)
 
 -- Start webserver...
 srv=net.createServer(net.TCP) 
@@ -35,7 +23,7 @@ srv:listen(80,function(conn)
       local _, _, pwd = payload:find("pwd=(.-)&")
       if (ssid ~= nil) and (pwd ~= nil) then
         print("Saving SSID data and restarting...")
-        save_config(ssid,pwd)
+        config(ssid,pwd)
         conn:send("HTTP/1.1 200 OK\r\n")
         conn:send("Content-type: text/html\r\n")
         conn:send("Connection: close\r\n\r\n")
@@ -43,6 +31,8 @@ srv:listen(80,function(conn)
 <H1>Configuration Saved</H1>
 <p/>Saved access point configuration.  Restarting in 3 seconds.</H1>
 </html>]====])
+        kill()
+        rgbw(0,30)
         tmr.alarm(1, 3000, 0, function() conn:close() srv:close() node.restart() end)
       else
         conn:send("HTTP/1.1 200 OK\r\n")

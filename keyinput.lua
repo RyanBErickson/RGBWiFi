@@ -1,17 +1,18 @@
 function lightning()
-  gLightning = gLightning or false
-  if (gLightning) then return end
-  gLightning = true
-  local intensity = INTENSITY
+  gLN = gLN or false
+  if (gLN) then return end
+  gLN = true
+
+  local i = INTENSITY
   local r,g,b,w = cur.R,cur.G,cur.B,cur.W
   INTENSITY = 100
-  for i=1, 5 do
+  for j=1, 5 do
     on() tmr.delay(10000) tmr.wdclr()
-    off() tmr.delay(i*15000) tmr.wdclr()
+    off() tmr.delay(j*15000) tmr.wdclr()
   end
-  INTENSITY = intensity
+  INTENSITY = i
   rgbw(r,g,b,w)
-  gLightning = false
+  gLN = nil
 end
 
 function debounce (func)
@@ -30,8 +31,9 @@ end
 function onChange ()
   gPressCount = (gPressCount or 0) + 1
   if (gPressCount > 9) then
+    config() -- reset config
     lightning()
-    reset()
+    node.restart()
   end
 end
 

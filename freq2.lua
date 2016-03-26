@@ -43,28 +43,5 @@ function freq(i)
 end
 
 print("Loaded Freq2...")
-blink(0,100,0,50,2)
-
-
--- Blink out the IP Address of the system...
-function enumerate(ip)
-  local blinkrate = 500
-
-  local _,_,lastip = ip:find("%d+%.%d+%.%d+%.(%d+)")
-  local nums = {}
-  for i = 1, #lastip do
-    local num = tonumber(lastip:sub(i,i))
-    if (num) then
-      table.insert(nums,tonumber(lastip:sub(i,i)))
-    end
-  end
-
-  blink(50,0,0,blinkrate,nums[1] or 0, 
-    function() blink(0,50,0,blinkrate,nums[2] or 0, 
-      function() blink(0,0,50,blinkrate,nums[3] or 0) end)
-    end)
-end
-
-tmr.alarm(0, 1500, 0, function() enumerate(ip) end) 
-
+blink(0,70,0,50,2)
 

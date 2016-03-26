@@ -1,6 +1,6 @@
 -- TODO: If there is no ip address (i.e. no client found) for X times booting (persist the data), automatically reset to AP mode.
 
-LOAD_DELAY = 3000
+LOAD_DELAY = 1500
 
 blinkstop()
 blink(30,30,0,250) -- Red blink waiting for IP...

@@ -5,6 +5,8 @@ LOAD_DELAY = 3000
 blinkstop()
 blink(30,30,0,250) -- Red blink waiting for IP...
 
+-- TODO: Look in to wifi.sta.eventMonReg() events... Then I can tell status in a more efficient manner.
+
 -- Wait for IP Address availability...
 tmr.alarm(0, 500, 1, function()   
 
@@ -29,12 +31,8 @@ tmr.alarm(0, 500, 1, function()
       tmr.alarm(0, delay, 0, function() require('udp') g(30) end)
       delay = delay + LOAD_DELAY
 
-      tmr.alarm(1, delay, 0, function() require('tcp') g(50) end)
-      delay = delay + LOAD_DELAY
-      --delay = delay + (LOAD_DELAY * 2)
-
       -- Delay loading of freq.lua to allow heap memory to recover...
-      tmr.alarm(3, delay, 0, function() require('freq') g(70) end)
+      tmr.alarm(3, delay, 0, function() require('freq') g(50) end)
       delay = delay + LOAD_DELAY
 
       tmr.alarm(4, delay, 0, function() off() require('freq2') end)

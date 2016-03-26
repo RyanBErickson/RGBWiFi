@@ -57,22 +57,17 @@ end
 
 
 function f_scene()
-  _i = _i or 0
-  _i = _i + 1 rgbw(freq(_i%200), freq((_i+33)%200), freq((_i+66)%200))
-  --_i = _i + 1 rgbw(freq(_i%200)) -- Only showing RED for simplicity at this point... should cycle 50-100-50-0-50...
+  _i = (_i or 0) + 1 rgbw(freq(_i%200), freq((_i+33)%200), freq((_i+66)%200))
 end
 
---local repeat = 1
+
 function scene(scene)
-  _i=0
+  local base = 88
+  if (scene == 0) then off() return end
+
   f_scene()
-  if (scene == 1) then
-    tmr.alarm(1,30,1,f_scene)
-  elseif (scene == 2) then
-    tmr.alarm(1,300,1,f_scene)
-  elseif (scene == 3) then
-    tmr.alarm(1,3000,1,f_scene)
-  end
+  tmr.stop(1)
+  tmr.alarm(1,base*(3^(scene-1)),1,f_scene) -- *1, *3, *9, *27
 end
 
 print("Loaded Freq...")

@@ -1,54 +1,71 @@
 -- Code from https://github.com/dannyvai/esp2866_tools
 
 -- Start 'myhotspot' AP... 
-print("Starting 'SSID:myhotspot' Server")
+print("Starting 'SSID:RGBWifi' Server")
 wifi.setmode(wifi.STATIONAP)
 wifi.ap.setip({ip = "192.168.1.1", gateway = "192.168.1.1", netmask = "255.255.255.0"})
-wifi.ap.config({ssid='myhotspot', pwd='myhotspot'})
-print(wifi.ap.getip())
+wifi.ap.config({ssid='RGBWifi', pwd='password'})
+wifi.ap.dhcp.start()
+print("DHCP Range: ["..wifi.ap.dhcp.config({start="192.168.1.100"}).."]")
+print("IP Info: [" .. wifi.ap.getip() .. "]")
 
--- slow blink red LED for 'configuration mode'... once every 3 seconds
---tmr.alarm(0, 1500, 1, function() led() end)
+-- Start slow 'yellow' blink...
 blinkstop()
-blink(20, 20, 0, 1000, 1000)
+blink(20, 20, 0, 1500, 1000)
+
+function SendContent(conn, content)
+  local out, tins = {}, table.insert
+  tins(out,"HTTP/1.1 200 OK\r\n")
+  tins(out,"Content-type: text/html\r\n")
+  tins(out,"Content-length: " .. #content .. "\r\n")
+  tins(out,"Connection: close\r\n\r\n")
+  tins(out,content)
+  print("SENDING: [" .. table.concat(out, "") .. "]")
+  conn:send(table.concat(out, ""))
+end
 
 -- Start webserver...
-srv=net.createServer(net.TCP) 
+srv=net.createServer(net.TCP, 30)
 srv:listen(80,function(conn)
   conn:on("receive",function(conn,payload)
     if string.find(payload,"favicon.ico") == nil then
+      print("recv: " .. payload)
       payload = payload .. "&" -- easier to parse...
-      print(payload)
       local _, _, ssid = payload:find("ssid=(.-)&")
       local _, _, pwd = payload:find("pwd=(.-)&")
       if (ssid ~= nil) and (pwd ~= nil) then
-        print("Saving SSID data and restarting...")
-        config(ssid,pwd)
-        conn:send("HTTP/1.1 200 OK\r\n")
-        conn:send("Content-type: text/html\r\n")
-        conn:send("Connection: close\r\n\r\n")
-        conn:send([====[<html>
-<H1>Configuration Saved</H1>
-<p/>Saved access point configuration.  Restarting in 3 seconds.</H1>
-</html>]====])
-        kill()
-        rgbw(0,30)
-        tmr.alarm(1, 3000, 0, function() conn:close() srv:close() node.restart() end)
+
+        -- Test the new config with wifi.station mode...
+        wifi.sta.eventMonReg(wifi.STA_WRONGPWD, function() 
+             SendContent(conn,"<html><h2>Wrong Password... Refresh to try again.</h2>")
+             rgbw(30,0)
+          end)
+        wifi.sta.eventMonReg(wifi.STA_GOTIP, function() 
+             config(ssid,pwd)
+             SendContent(conn,"<html><h2>Success!!!<h2><p/>IP Address: " .. (wifi.sta.getip()) .. 
+                              "<p/>Saving Config and restarting...")
+             blinkstop()
+             blink(0, 50, 0, 1000, 3, function() node.restart() end)
+          end)
+	wifi.sta.eventMonStart()
+        wifi.sta.config(ssid,pwd)
       else
-        conn:send("HTTP/1.1 200 OK\r\n")
-        conn:send("Content-type: text/html\r\n")
-        conn:send("Connection: close\r\n\r\n")
-        conn:send([====[<html>
+        local content = [====[<html>
   <form method="POST" name="config_wifi">
     <p>ssid:<input type="text" name="ssid" value="" /></p>
     <p>pwd:<input type="text" name="pwd" value="" /></p>
     <p><input type="submit" value="Config" /></p>
   </form>
-</html>]====])
+</html>]====]
+        SendContent(conn,content)
       end
+    else
+      -- no favicon...
+      conn:close()
     end
   end)
   conn:on("sent",function(conn) conn:close() end)
 end)
 
 print("Loaded connect...")
+

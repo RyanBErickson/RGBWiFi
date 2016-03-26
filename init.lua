@@ -126,7 +126,8 @@ function blinkstop()
   _blink = 2
 end
 
-function blink(r, g, b, rate, max)
+function blink(r, g, b, rate, max, cb)
+  if (cb ~= nil) then _cb = cb end
   _blink = _blink or 2
   max = max or 25
   if (_blink == 2) then
@@ -138,7 +139,7 @@ function blink(r, g, b, rate, max)
 
   if (_blink == 0) then
     _cur = _cur + 1
-    if (_cur > _max) then blinkstop() off() return end
+    if (_cur > _max) then blinkstop() off() if (_cb) then local c = _cb _cb = nil c() end return end
     rgbw(r,g,b,0)
     _blink = 1
   else

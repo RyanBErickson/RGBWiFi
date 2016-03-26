@@ -6,6 +6,7 @@ miniterm.py /dev/ttyUSB0 9600
 #telnet 192.168.29.104 8124
 #telnet 192.168.1.228 8124
 #telnet 192.168.0.178 8124
+#telnet 192.168.29.245 8124
 # NOTE: Try gtkterm to see if it supports 'weird' 76800 baud rate for bootup sequence...
 
 # MAC miniterm settings:

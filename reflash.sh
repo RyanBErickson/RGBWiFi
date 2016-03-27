@@ -23,3 +23,6 @@
 #sudo python ../esptool/esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 ../firmware/NodeMCU\ Custom\ Build/nodemcu-master-9-modules-2015-08-10-01-56-53-integer.bin
 
 sudo python ../esptool/esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 ../firmware/NodeMCUBuild/nodemcu-firmware/bin/nodemcu_integer_master_20160325-1742.bin
+
+#MAC
+#sudo python ../esptool/esptool.py --port /dev/cu.usbserial --baud 115200 write_flash 0x00000 ../firmware/NodeMCUBuild/nodemcu-firmware/bin/nodemcu_integer_master_20160325-1742.bin

@@ -37,25 +37,25 @@ srv:listen(80,function(conn)
 
         -- Test the new config with wifi.station mode...
         wifi.sta.eventMonReg(wifi.STA_WRONGPWD, function() 
-             SendContent(conn,"<html><h2>Wrong Password... Refresh to try again.</h2>")
+             SendContent(conn,'<html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><h2>Wrong Password... Refresh to try again.</h2></body></html>')
              rgbw(30,0)
           end)
         wifi.sta.eventMonReg(wifi.STA_GOTIP, function() 
              config(ssid,pwd)
-             SendContent(conn,"<html><h2>Success!!!<h2><p/>IP Address: " .. (wifi.sta.getip()) .. 
-                              "<p/>Saving Config and restarting...")
+             SendContent(conn,'<html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><h2>Success!!!<h2><p/>IP Address: ' .. (wifi.sta.getip()) .. 
+                              '<p/>Saving Config and restarting...</body></html>')
              blinkstop()
              blink(0, 50, 0, 1000, 3, function() node.restart() end)
           end)
 	wifi.sta.eventMonStart()
         wifi.sta.config(ssid,pwd)
       else
-        local content = [====[<html>
+        local content = [====[<html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
   <form method="POST" name="config_wifi">
     <p>ssid:<input type="text" name="ssid" value="" /></p>
     <p>pwd:<input type="text" name="pwd" value="" /></p>
     <p><input type="submit" value="Config" /></p>
-  </form>
+  </form></body>
 </html>]====]
         SendContent(conn,content)
       end

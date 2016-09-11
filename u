@@ -3,4 +3,4 @@
 #./luatool.py -f udp.lua -t udp.lua
 #./luatool.py -f tcp.lua -t tcp.lua
 ./upload.lua udp.lua udp.lua $1
-#./upload.lua tcp.lua tcp.lua $1
+./upload.lua tcp.lua tcp.lua $1

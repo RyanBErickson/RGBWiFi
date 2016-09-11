@@ -24,7 +24,7 @@ function StartUDP()
 
 end
 
-
+--[[
 function StartTCP()
   -- TCP Server...
   tsrv=net.createServer(net.TCP, 600)
@@ -57,7 +57,7 @@ tmr.alarm(0, 500, 1, function()
     print("Started UDP / TCP [" .. ip .. ":" .. UDPPORT .. "/" .. TCPPORT .. "]...")
   end
 end)
-
+]]
 print("Loaded UDP...")
 
 
